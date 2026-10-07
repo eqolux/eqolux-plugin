@@ -1,6 +1,6 @@
 {
   "name": "eqolux",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ask questions about your purchasing in plain language and get answers from your own Eqolux data: who your biggest suppliers are, how spend evolves by establishment and month, which product prices went up, where the same product is bought at very different prices, which purchases exceed a negotiated price, where your products come from and what their carbon footprint is.\n\nEqolux reads your supplier invoices, delivery notes and credit notes and turns them into structured purchase data. This plugin connects your Eqolux account and adds two skills: purchasing analysis and savings opportunities. Every answer is limited to the organizations and establishments you can access in Eqolux, and links back to the products, documents and suppliers in the Eqolux app.\n\nRequirements: an Eqolux account. Sign in with your Eqolux credentials when prompted.",
   "author": {
     "name": "Eqolux",

@@ -1,8 +1,9 @@
 {
   "name": "eqolux",
   "displayName": "Eqolux",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Analyze your restaurant and hotel purchasing data from Eqolux: spend by supplier, establishment and category, product prices and their evolution, savings opportunities, origins and carbon footprint, with links back to the Eqolux app.",
+  "icon": "./assets/logo.png",
   "author": {
     "name": "Eqolux",
     "url": "https://www.eqolux.com"
