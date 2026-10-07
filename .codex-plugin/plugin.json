@@ -1,20 +1,19 @@
 {
   "name": "eqolux",
-  "version": "0.1.1",
-  "description": "Ask questions about your purchasing in plain language and get answers from your own Eqolux data: who your biggest suppliers are, how spend evolves by establishment and month, which product prices went up, where the same product is bought at very different prices, which purchases exceed a negotiated price, where your products come from and what their carbon footprint is.\n\nEqolux reads your supplier invoices, delivery notes and credit notes and turns them into structured purchase data. This plugin connects your Eqolux account and adds two skills: purchasing analysis and savings opportunities. Every answer is limited to the organizations and establishments you can access in Eqolux, and links back to the products, documents and suppliers in the Eqolux app.\n\nRequirements: an Eqolux account. Sign in with your Eqolux credentials when prompted.",
+  "version": "0.1.2",
+  "description": "Eqolux is a purchasing analytics platform for restaurant and hotel groups: it reads their supplier invoices, delivery notes and credit notes and turns them into structured purchase data. This plugin connects your Eqolux account so you can analyze that purchasing data in plain language.\n\nAsk who your biggest suppliers are, how spend evolves by establishment and month, which product prices went up, where the same product is bought at very different prices, which purchases exceed a negotiated price, where your products come from and what their carbon footprint is. Answers link back to the products, documents and suppliers in the Eqolux app.\n\nThe plugin adds two skills, purchasing analysis and savings opportunities, on top of the Eqolux connector. It only reads data: every answer is limited to the organizations and establishments your Eqolux account can access.\n\nRequirements: an Eqolux account. Sign in with your Eqolux credentials when prompted.",
   "author": {
     "name": "Eqolux",
     "url": "https://www.eqolux.com"
   },
   "license": "MIT",
   "skills": "./skills",
-  "apps": "./.app.json",
   "interface": {
     "displayName": "Eqolux",
     "shortDescription": "Analyze your purchasing data",
-    "longDescription": "Ask questions about your purchasing in plain language and get answers from your own Eqolux data: who your biggest suppliers are, how spend evolves by establishment and month, which product prices went up, where the same product is bought at very different prices, which purchases exceed a negotiated price, where your products come from and what their carbon footprint is.\n\nEqolux reads your supplier invoices, delivery notes and credit notes and turns them into structured purchase data. This plugin connects your Eqolux account and adds two skills: purchasing analysis and savings opportunities. Every answer is limited to the organizations and establishments you can access in Eqolux, and links back to the products, documents and suppliers in the Eqolux app.\n\nRequirements: an Eqolux account. Sign in with your Eqolux credentials when prompted.",
+    "longDescription": "Eqolux is a purchasing analytics platform for restaurant and hotel groups: it reads their supplier invoices, delivery notes and credit notes and turns them into structured purchase data. This plugin connects your Eqolux account so you can analyze that purchasing data in plain language.\n\nAsk who your biggest suppliers are, how spend evolves by establishment and month, which product prices went up, where the same product is bought at very different prices, which purchases exceed a negotiated price, where your products come from and what their carbon footprint is. Answers link back to the products, documents and suppliers in the Eqolux app.\n\nThe plugin adds two skills, purchasing analysis and savings opportunities, on top of the Eqolux connector. It only reads data: every answer is limited to the organizations and establishments your Eqolux account can access.\n\nRequirements: an Eqolux account. Sign in with your Eqolux credentials when prompted.",
     "developerName": "Eqolux",
-    "category": "Productivity",
+    "category": "Business & Operations",
     "capabilities": [],
     "defaultPrompt": [
       "Who were my 10 biggest suppliers over the last 12 months?",
