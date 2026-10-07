@@ -1,0 +1,4 @@
+interface:
+  display_name: "Eqolux savings opportunities"
+  short_description: "Find price gaps, price increases and purchases above negotiated prices"
+  default_prompt: "Where could I save money on my purchases? Show the products bought at very different prices and the biggest price increases."

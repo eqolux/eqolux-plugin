@@ -1,0 +1,4 @@
+interface:
+  display_name: "Eqolux purchasing analysis"
+  short_description: "Analyze spend, suppliers, prices and CO2 from Eqolux purchasing data"
+  default_prompt: "Who were my 10 biggest suppliers over the last 12 months, and how did spend change month by month?"

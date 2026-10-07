@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "eqolux": {
+      "type": "http",
+      "url": "https://mcp.eqolux.com/mcp"
+    }
+  }
+}

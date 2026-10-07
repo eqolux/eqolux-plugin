@@ -1,0 +1,32 @@
+{
+  "name": "eqolux",
+  "version": "0.1.0",
+  "description": "Ask questions about your purchasing in plain language and get answers from your own Eqolux data: who your biggest suppliers are, how spend evolves by establishment and month, which product prices went up, where the same product is bought at very different prices, which purchases exceed a negotiated price, where your products come from and what their carbon footprint is.\n\nEqolux reads your supplier invoices, delivery notes and credit notes and turns them into structured purchase data. This plugin connects your Eqolux account and adds two skills: purchasing analysis and savings opportunities. Every answer is limited to the organizations and establishments you can access in Eqolux, and links back to the products, documents and suppliers in the Eqolux app.\n\nRequirements: an Eqolux account. Sign in with your Eqolux credentials when prompted.",
+  "author": {
+    "name": "Eqolux",
+    "url": "https://www.eqolux.com"
+  },
+  "license": "MIT",
+  "skills": "./skills",
+  "apps": "./.app.json",
+  "interface": {
+    "displayName": "Eqolux",
+    "shortDescription": "Analyze your purchasing data",
+    "longDescription": "Ask questions about your purchasing in plain language and get answers from your own Eqolux data: who your biggest suppliers are, how spend evolves by establishment and month, which product prices went up, where the same product is bought at very different prices, which purchases exceed a negotiated price, where your products come from and what their carbon footprint is.\n\nEqolux reads your supplier invoices, delivery notes and credit notes and turns them into structured purchase data. This plugin connects your Eqolux account and adds two skills: purchasing analysis and savings opportunities. Every answer is limited to the organizations and establishments you can access in Eqolux, and links back to the products, documents and suppliers in the Eqolux app.\n\nRequirements: an Eqolux account. Sign in with your Eqolux credentials when prompted.",
+    "developerName": "Eqolux",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "Who were my 10 biggest suppliers over the last 12 months?",
+      "Which product prices increased the most in the last 6 months?",
+      "Where could I save money on my food purchases?"
+    ],
+    "websiteURL": "https://www.eqolux.com",
+    "supportURL": "https://www.eqolux.com/contact/",
+    "privacyPolicyURL": "https://www.eqolux.com/privacy-policy/",
+    "termsOfServiceURL": "https://www.eqolux.com/terms/",
+    "brandColor": "#0A2961",
+    "composerIcon": "./assets/composer-icon.png",
+    "logo": "./assets/logo.png"
+  }
+}
