@@ -3,8 +3,20 @@
   "displayName": "Eqolux",
   "version": "0.1.0",
   "description": "Analyze your restaurant and hotel purchasing data from Eqolux: spend by supplier, establishment and category, product prices and their evolution, savings opportunities, origins and carbon footprint, with links back to the Eqolux app.",
-  "author": { "name": "Eqolux", "url": "https://www.eqolux.com" },
+  "author": {
+    "name": "Eqolux",
+    "url": "https://www.eqolux.com"
+  },
   "homepage": "https://www.eqolux.com",
+  "privacyPolicyUrl": "https://www.eqolux.com/privacy-policy/",
   "license": "MIT",
-  "keywords": ["purchasing", "procurement", "restaurants", "hotels", "food cost", "suppliers", "invoices"]
+  "keywords": [
+    "purchasing",
+    "procurement",
+    "restaurants",
+    "hotels",
+    "food cost",
+    "suppliers",
+    "invoices"
+  ]
 }
