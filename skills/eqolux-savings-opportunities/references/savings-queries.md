@@ -2,9 +2,13 @@
 
 Tested queries for `run_sql_query`. Adapt the period and the thresholds (minimum spend, price ratio) to the user's request.
 
+Each query lists the arguments to pass with the SQL. The dates are examples for a question asked on 2026-10-07: replace them with the user's period. `period_start` is included and `period_end` excluded, so pass tomorrow's date to include today. The period limits `orders` and `documents` before the query runs, which is what keeps it fast; a `WHERE` on `date` alone does not.
+
 ## 1. The same product at very different prices
 
 Food is compared per kg, other products per unit. The two last columns link the documents where the lowest and highest prices were paid.
+
+Arguments: `period_start` `2025-10-08`, `period_end` `2026-10-08` (last 12 months).
 
 ```sql
 WITH lines AS (
@@ -14,8 +18,7 @@ WITH lines AS (
     CASE WHEN p.item_category_type = 'food' THEN o.total_weight_kg ELSE o.quantity END AS volume
   FROM orders o
   JOIN products p ON p.id = o.product_id
-  WHERE o.date >= CURRENT_DATE - INTERVAL '12 months'
-    AND NOT o.is_credit_note
+  WHERE NOT o.is_credit_note
 )
 SELECT p.id, p.name, p.supplier_name, p.app_url, l.price_basis,
   ROUND(MIN(l.price), 2) AS min_price,
@@ -35,18 +38,19 @@ LIMIT 10
 
 ## 2. Price increases
 
-Last 6 months against the 6 months before, weighted by volume. For a year-on-year comparison, change the two periods.
+Last 6 months against the 6 months before, weighted by volume. The period covers both halves; the date literal in the query is where the recent half starts (6 months before `period_end`). For a year-on-year comparison, pass a period that covers both years and change the split.
+
+Arguments: `period_start` `2025-10-08`, `period_end` `2026-10-08`.
 
 ```sql
 WITH lines AS (
   SELECT o.product_id,
-    CASE WHEN o.date >= CURRENT_DATE - INTERVAL '6 months' THEN 'recent' ELSE 'before' END AS period,
+    CASE WHEN o.date >= DATE '2026-04-08' THEN 'recent' ELSE 'before' END AS period,
     o.total_amount_ht,
     CASE WHEN p.item_category_type = 'food' THEN o.total_weight_kg ELSE o.quantity END AS volume
   FROM orders o
   JOIN products p ON p.id = o.product_id
-  WHERE o.date >= CURRENT_DATE - INTERVAL '12 months'
-    AND NOT o.is_credit_note
+  WHERE NOT o.is_credit_note
 ), by_period AS (
   SELECT product_id,
     SUM(total_amount_ht) FILTER (WHERE period = 'before') / NULLIF(SUM(volume) FILTER (WHERE period = 'before'), 0) AS price_before,
@@ -72,6 +76,8 @@ LIMIT 10
 
 `fixed_price` is expressed per `fixed_price_unit` (`kg` or `unit`).
 
+Arguments: `period_start` `2025-10-08`, `period_end` `2026-10-08`.
+
 ```sql
 SELECT p.id, p.name, p.supplier_name, p.app_url, p.fixed_price, p.fixed_price_unit,
   ROUND(SUM(o.total_amount_ht) / NULLIF(SUM(CASE WHEN p.fixed_price_unit = 'kg' THEN o.total_weight_kg ELSE o.quantity END), 0), 2) AS paid_price,
@@ -79,7 +85,6 @@ SELECT p.id, p.name, p.supplier_name, p.app_url, p.fixed_price, p.fixed_price_un
 FROM orders o
 JOIN products p ON p.id = o.product_id
 WHERE p.fixed_price IS NOT NULL
-  AND o.date >= CURRENT_DATE - INTERVAL '12 months'
   AND NOT o.is_credit_note
 GROUP BY p.id, p.name, p.supplier_name, p.app_url, p.fixed_price, p.fixed_price_unit
 HAVING SUM(o.total_amount_ht) - p.fixed_price * SUM(CASE WHEN p.fixed_price_unit = 'kg' THEN o.total_weight_kg ELSE o.quantity END) > 0

@@ -2,9 +2,13 @@
 
 Tested queries for `run_sql_query`. Replace the period, names and ids with the user's. Every query covers the organization passed as `organization_id`.
 
+Each recipe lists the arguments to pass with the SQL. The dates are examples for a question asked on 2026-10-07: replace them with the user's period. `period_start` is included and `period_end` excluded, so pass tomorrow's date to include today. The period limits `orders` and `documents` before the query runs, which is what keeps it fast; a `WHERE` on `date` alone does not.
+
 ## Spend by supplier
 
 Spend totals come from `documents`, like the Eqolux app.
+
+Arguments: `period_start` `2025-10-08`, `period_end` `2026-10-08` (last 12 months).
 
 ```sql
 SELECT s.id, s.name, s.app_url,
@@ -12,7 +16,6 @@ SELECT s.id, s.name, s.app_url,
   ROUND(SUM(d.total_amount_ht), 2) AS spend_ht
 FROM documents d
 JOIN organizations s ON s.id = d.supplier_id
-WHERE d.date >= CURRENT_DATE - INTERVAL '12 months'
 GROUP BY s.id, s.name, s.app_url
 ORDER BY spend_ht DESC
 LIMIT 20
@@ -22,13 +25,14 @@ LIMIT 20
 
 Pivot the result into one column per month when presenting it.
 
+Arguments: `period_start` `2025-11-01`, `period_end` `2026-10-08` (the current month and the 11 before it).
+
 ```sql
 SELECT c.name AS establishment,
   date_trunc('month', d.date)::date AS month,
   ROUND(SUM(d.total_amount_ht), 2) AS spend_ht
 FROM documents d
 JOIN organizations c ON c.id = d.client_id
-WHERE d.date >= date_trunc('month', CURRENT_DATE) - INTERVAL '11 months'
 GROUP BY 1, 2
 ORDER BY 1, 2
 ```
@@ -37,6 +41,8 @@ ORDER BY 1, 2
 
 Categories live on products, so this one sums product lines (`orders`).
 
+Arguments: `period_start` `2025-10-08`, `period_end` `2026-10-08`.
+
 ```sql
 SELECT COALESCE(p.item_category_name, 'Uncategorized') AS category,
   ROUND(SUM(o.total_amount_ht), 2) AS spend_ht,
@@ -44,13 +50,14 @@ SELECT COALESCE(p.item_category_name, 'Uncategorized') AS category,
   COUNT(DISTINCT o.product_id) AS products
 FROM orders o
 JOIN products p ON p.id = o.product_id
-WHERE o.date >= CURRENT_DATE - INTERVAL '12 months'
 GROUP BY 1
 ORDER BY spend_ht DESC
 LIMIT 50
 ```
 
 ## Find a product by name
+
+`products` is not limited by the period: no period argument is needed.
 
 ```sql
 SELECT p.id, p.name, p.supplier_name, p.item_category_name, p.app_url
@@ -64,6 +71,8 @@ LIMIT 20
 ## Price evolution of a product, by month
 
 Weighted average price per kg (food). For other products, use `quantity` instead of `total_weight_kg` and `unit_price_ht` instead of `price_per_kg`.
+
+Arguments: `period_start` `2024-10-08`, `period_end` `2026-10-08` (24 months; pass an earlier `period_start`, up to 120 months, for a longer history).
 
 ```sql
 SELECT date_trunc('month', o.date)::date AS month,
@@ -81,13 +90,14 @@ ORDER BY 1
 
 ## Origins
 
+Arguments: `period_start` `2025-10-08`, `period_end` `2026-10-08`.
+
 ```sql
 SELECT COALESCE(o.origin_name, 'Unknown') AS origin,
   ROUND(SUM(o.total_weight_kg), 0) AS weight_kg,
   ROUND(SUM(o.total_amount_ht), 2) AS spend_ht,
   ROUND(100.0 * SUM(o.total_amount_ht) / NULLIF(SUM(SUM(o.total_amount_ht)) OVER (), 0), 1) AS spend_share_pct
 FROM orders o
-WHERE o.date >= CURRENT_DATE - INTERVAL '12 months'
 GROUP BY 1
 ORDER BY spend_ht DESC
 LIMIT 20
@@ -97,6 +107,8 @@ LIMIT 20
 
 `co2_kg` is an estimate in kg CO2e (Agribalyse factor × weight).
 
+Arguments: `period_start` `2025-10-08`, `period_end` `2026-10-08`.
+
 ```sql
 SELECT COALESCE(p.item_category_name, 'Uncategorized') AS category,
   ROUND(SUM(o.co2_kg), 0) AS co2_kg,
@@ -104,8 +116,7 @@ SELECT COALESCE(p.item_category_name, 'Uncategorized') AS category,
   ROUND(SUM(o.co2_kg) / NULLIF(SUM(o.total_weight_kg), 0), 2) AS co2_kg_per_kg
 FROM orders o
 JOIN products p ON p.id = o.product_id
-WHERE o.date >= CURRENT_DATE - INTERVAL '12 months'
-  AND o.co2_kg IS NOT NULL
+WHERE o.co2_kg IS NOT NULL
 GROUP BY 1
 ORDER BY co2_kg DESC
 LIMIT 20

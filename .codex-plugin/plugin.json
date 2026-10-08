@@ -1,6 +1,6 @@
 {
   "name": "eqolux",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Eqolux is a purchasing analytics platform for restaurant and hotel groups: it reads their supplier invoices, delivery notes and credit notes and turns them into structured purchase data. This plugin connects your Eqolux account so you can analyze that purchasing data in plain language.\n\nAsk who your biggest suppliers are, how spend evolves by establishment and month, which product prices went up, where the same product is bought at very different prices, which purchases exceed a negotiated price, where your products come from and what their carbon footprint is. Answers link back to the products, documents and suppliers in the Eqolux app.\n\nThe plugin adds two skills, purchasing analysis and savings opportunities, on top of the Eqolux connector. It only reads data: every answer is limited to the organizations and establishments your Eqolux account can access.\n\nRequirements: an Eqolux account. Sign in with your Eqolux credentials when prompted.",
   "author": {
     "name": "Eqolux",
