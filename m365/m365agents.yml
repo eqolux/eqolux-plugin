@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=https://aka.ms/m365-agents-toolkits/v1.12/yaml.schema.json
+# Visit https://aka.ms/teamsfx-v5.0-guide for details on this file
+# Visit https://aka.ms/teamsfx-actions for details on actions
+version: v1.12
+
+environmentFolderPath: ./env
+
+# Triggered when 'atk provision' is executed
+provision:
+  # Creates the app in the Teams Developer Portal
+  - uses: teamsApp/create
+    with:
+      name: Eqolux${{APP_NAME_SUFFIX}}
+    writeToEnvironmentFile:
+      teamsAppId: TEAMS_APP_ID
+
+  # Registers the static OAuth client (WorkOS AuthKit) in the Microsoft
+  # Enterprise token store. Runs once per environment: when
+  # MCP_DA_AUTH_ID_EQOLUX already has a value, the action does nothing; use
+  # oauth/update or the Teams Developer Portal to change the registration.
+  - uses: oauth/register
+    with:
+      name: eqolux
+      # Validated by the driver even though applicableToApps is AnyApp.
+      appId: ${{TEAMS_APP_ID}}
+      flow: authorizationCode
+      identityProvider: Custom
+      authorizationUrl: https://sincere-giggle-81.authkit.app/oauth2/authorize
+      tokenUrl: https://sincere-giggle-81.authkit.app/oauth2/token
+      refreshUrl: https://sincere-giggle-81.authkit.app/oauth2/token
+      baseUrl: https://mcp.eqolux.com/mcp
+      clientId: ${{MCP_DA_OAUTH_CLIENT_ID_EQOLUX}}
+      # Public client (PKCE only): no secret. For a confidential client, add
+      #   clientSecret: ${{SECRET_MCP_DA_OAUTH_CLIENT_SECRET_EQOLUX}}
+      # with a non-empty value in env/.env.<env>.user (the toolkit treats an
+      # empty variable as missing and stops the provision).
+      scope: ${{MCP_DA_OAUTH_SCOPE_EQOLUX}}
+      isPKCEEnabled: true
+      # Any Microsoft 365 organization, any app: required for a store listing.
+      targetAudience: AnyTenant
+      applicableToApps: AnyApp
+    writeToEnvironmentFile:
+      configurationId: MCP_DA_AUTH_ID_EQOLUX
+
+  # Build app package with latest env value
+  - uses: teamsApp/zipAppPackage
+    with:
+      manifestPath: ./appPackage/manifest.json
+      outputZipPath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+      outputFolder: ./appPackage/build
+
+  # Validate app package using validation rules
+  - uses: teamsApp/validateAppPackage
+    with:
+      appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+
+  # Apply the app manifest to the app in the Teams Developer Portal
+  - uses: teamsApp/update
+    with:
+      appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+
+  # Extend the app to Microsoft 365 Copilot, Outlook and the Microsoft 365 app
+  # (sideloaded for the signed-in developer)
+  - uses: copilotAgent/publish
+    with:
+      appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+    writeToEnvironmentFile:
+      titleId: M365_TITLE_ID
+      appId: M365_APP_ID
+
+# Triggered when 'atk publish' is executed: publishes to the tenant's own app
+# catalog (an organization pilot), not to the Agent Store. Store submissions go
+# through Partner Center with the zip built by 'atk package' (see README.md).
+publish:
+  - uses: teamsApp/zipAppPackage
+    with:
+      manifestPath: ./appPackage/manifest.json
+      outputZipPath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+      outputFolder: ./appPackage/build
+  - uses: teamsApp/validateAppPackage
+    with:
+      appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+  - uses: teamsApp/update
+    with:
+      appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+  - uses: copilotAgent/publish
+    with:
+      appPackagePath: ./appPackage/build/appPackage.${{TEAMSFX_ENV}}.zip
+      scope: tenant
+    writeToEnvironmentFile:
+      titleId: M365_PUBLISHED_TITLE_ID
+      appId: M365_PUBLISHED_APP_ID
+projectId: d86a640f-1128-4e9d-8d22-520b4b445632

@@ -4,6 +4,8 @@ Tested queries for `run_sql_query`. Replace the period, names and ids with the u
 
 Each recipe lists the arguments to pass with the SQL. The dates are examples for a question asked on 2026-10-07: replace them with the user's period. `period_start` is included and `period_end` excluded, so pass tomorrow's date to include today. The period limits `orders` and `documents` before the query runs, which is what keeps it fast; a `WHERE` on `date` alone does not.
 
+On large organizations, mention each table once and aggregate first: group `orders` (or `documents`) by the id you need, then join `products` or `organizations` once on that id. Each mention of a table reads all of its rows again (the whole period for `orders` and `documents`), even when it is filtered on one id, so a second mention of the same table doubles the time.
+
 ## Spend by supplier
 
 Spend totals come from `documents`, like the Eqolux app.

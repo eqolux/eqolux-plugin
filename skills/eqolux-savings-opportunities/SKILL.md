@@ -36,7 +36,7 @@ Compare each product's average price, weighted by volume, between two periods: b
 
 ### 3. Purchases above a negotiated price
 
-`products.fixed_price` holds a negotiated price, in the unit given by `fixed_price_unit` (`kg` or `unit`). Compare it with the price actually paid and rank by extra cost: `spend - fixed price × volume`.
+`products.fixed_price` holds a negotiated price, in the unit given by `fixed_price_unit` (`Kg` or `U`, compare case-insensitively); `0` means none. Compare it with the price actually paid and rank by extra cost: `spend - fixed price × volume`.
 
 ## Presenting the findings
 
