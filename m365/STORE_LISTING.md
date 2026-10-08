@@ -158,10 +158,12 @@ The labels of the sign-in button and of the settings menu in French Copilot may 
 
 ### Search keywords (optional, up to three)
 
+Partner Center asks for words that are not already in the name, summary or description, so "purchasing" and "suppliers" (both in the description) are left out.
+
 | | Keywords |
 | --- | --- |
-| EN | purchasing, suppliers, food cost |
-| FR | achats, fournisseurs, coût matière |
+| EN | procurement, food cost, cost control (entered on 2026-10-08) |
+| FR | approvisionnement, coût matière, contrôle des coûts |
 
 ### Logo
 
