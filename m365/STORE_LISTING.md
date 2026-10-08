@@ -22,7 +22,7 @@ Items that block or weaken the submission today. Section 9 maps every guideline.
 3. **Re-test the version submitted.** The package now carries a disclaimer, new descriptions, a new spend starter and two instruction changes (negotiated prices, errors). Run `atk provision --env dev` (it rebuilds and re-sideloads the dev agent with the same texts), run the six starters and the negative cases of section 7, and take the screenshots on that build.
 4. **Response time.** Microsoft asks for at most 9 s for 99 % of responses (2 s for 50 %, 5 s for 75 %). On the demo organization every query runs in 0.25 to 0.5 s in the database; the end-to-end time in Copilot (sign-in excluded) has not been measured. Measure each starter in Copilot Chat, Teams and Word. On large customers (organization 590) the savings query takes up to 7.9 s on 12 months, too close to the limit.
 5. **Availability (99.9 %).** Confirm that production runs the cold-start fix and `--min-instances 1` (project-status entry of 2026-10-08 afternoon), and add an uptime check on `https://mcp.eqolux.com/health` (answers `{"ok":true}`), so a failure is seen before Microsoft's continuous health evaluation sees it.
-6. **Test accounts.** `review@eqolux.com` (Eqolux user 173, organization 259 only) must stay active, without MFA or email-code-only sign-in, and with a known password, for as long as the agent is listed: Microsoft re-tests listed agents. Microsoft also asks for "at least one account that isn't pre-configured to test the first-run sign-in experience": create a second Eqolux account on organization 259 that has never signed in anywhere (for example `review2@eqolux.com`) and give both.
+6. **Test accounts.** `review@eqolux.com` (Eqolux user 173, organization 259 only) must stay active, without MFA or email-code-only sign-in, and with a known password, for as long as the agent is listed: Microsoft re-tests listed agents. Microsoft also asks for "at least one account that isn't pre-configured to test the first-run sign-in experience". One account is enough here (decision of 2026-10-08): the first run in Copilot is per Microsoft user (each reviewer sees the **Sign in to Eqolux** card the first time, whatever the Eqolux account did elsewhere), and the account needs no setup in Eqolux. The account is shared with the Anthropic and OpenAI reviews: the server runs one query at a time per account, so overlapping reviews can get "Eqolux is busy right now, retry in about 30 seconds"; say so in the notes.
 7. **OAuth registration.** Open the Teams Developer Portal, **Tools > OAuth client registration**, and confirm on the dev registration: **Restrict usage by org** = *Any Microsoft 365 organization*, **Restrict usage by app** = *Any Teams app*, base URL `https://mcp.eqolux.com/mcp`. With *My organization only*, reviewers and customers cannot sign in.
 8. **Screenshots and video** (section 5): to capture.
 9. **Partner Center account.** The Microsoft 365 and Copilot program and the company verification are complete (2026-10-08). Confirm that the domain `eqolux.com` is verified for the publisher (the MCP server must be served from it or a subdomain). Publisher Attestation (policy 1140.6) is completed after the first listing.
@@ -198,10 +198,9 @@ Paste the short version in **Notes for certification** and upload the full versi
 ```text
 Eqolux agent for Microsoft 365 Copilot: a declarative agent with one action, a remote MCP server (https://mcp.eqolux.com/mcp) exposing three read-only tools (list_organizations, describe_data, run_sql_query; readOnlyHint true). It reads the purchasing data of restaurant and hotel groups in Eqolux. No Microsoft Entra ID, no SSO, no tenant data, no admin configuration beyond allowing the agent.
 
-TEST ACCOUNTS (Eqolux accounts, no MFA, valid for as long as the agent is listed)
+TEST ACCOUNT (Eqolux account, no MFA, valid for as long as the agent is listed)
 1. review@eqolux.com / password: <PASSWORD 1>
-2. review2@eqolux.com / password: <PASSWORD 2> (never signed in: first-run test)
-Both belong only to the demo organization "Best Hotels Group" (id 259), which holds synthetic data.
+It belongs only to the demo organization "Best Hotels Group" (id 259), which holds synthetic data. The account can be in use by other reviews at the same time: an answer "Eqolux is busy right now, retry in about 30 seconds" means another session is running a query; retry after 30 seconds.
 
 SIGN-IN
 1. Open Microsoft 365 Copilot Chat, select the Eqolux agent, select a conversation starter.
@@ -233,7 +232,7 @@ Support: support@eqolux.com
 
 Safeguards on the server: the query is parsed with the PostgreSQL parser and only a single SELECT over the documented dataset tables is accepted (no writes, no system tables, no recursive queries, limited functions); it runs in a read-only transaction with a statement timeout; row-level scope is computed from the user's Eqolux permissions for each call; per-user rate limits. Text values returned from documents are treated as data, never as instructions (server instructions and agent instructions).
 
-**Test accounts.** Two Eqolux accounts on the demo organization "Best Hotels Group" (id 259), the only organization they can access. The first has been used before; the second has never signed in, for the first-run experience. Neither has MFA. Passwords are in the Notes for certification.
+**Test account.** One Eqolux account on the demo organization "Best Hotels Group" (id 259), the only organization it can access, without MFA; the password is in the Notes for certification. Each reviewer sees the first-run **Sign in to Eqolux** card in Copilot the first time. The account may be used by other reviews at the same time; if an answer says "Eqolux is busy right now, retry in about 30 seconds", retry after 30 seconds.
 
 **Sign-in steps.**
 1. Open Microsoft 365 Copilot Chat (`https://m365.cloud.microsoft/chat`), Microsoft Teams (Copilot) or Word (Copilot pane), and select the **Eqolux** agent.
@@ -320,7 +319,7 @@ Sources: validation guidelines for agents (2026-08-13), Teams Store validation g
 | Icons: color 192×192, outline 32×32 white on transparent; store icon matches (Teams guidelines) | Validated by the toolkit; same icon for the listing | Met |
 | Screenshots: 3 to 5, 1366×768, ≤ 1,024 KB, captions, real UI, ≥ 1 in Copilot; other Microsoft 365 clients recommended (agents and Teams guidelines; 1140.4.1; 1140.9) | Five planned in section 5 (Copilot Chat, Teams, Word) | To do |
 | Video ads turned off (1140.4.1) | Only if a video is added | To do if used |
-| Test accounts valid as long as listed, with data; one not pre-configured (1140.4.1; submission checklist) | `review@eqolux.com` on organization 259; second account to create | To do (section 1, item 6) |
+| Test accounts valid as long as listed, with data; one not pre-configured (1140.4.1; submission checklist) | `review@eqolux.com` on organization 259 (single account, first run per Microsoft user) | Met |
 | AI content: no harmful content; report mechanism; AI described before acquisition; AI disclaimer in the UI (1140.4.1; Teams AI guidelines) | Answers come from purchasing data only; support@eqolux.com to report; AI stated in the description; disclaimer at conversation start, plus Copilot's own AI notice | Met |
 | Privacy policy: covers the app, personal data handling, storage, retention, deletion, security, contact; no login; same link as the manifest (100.6; Teams guidelines; Partner Center) | Retention, security and contact sections exist; the connector is described in section 8 | To do: name Microsoft 365 Copilot (section 1, item 1) |
 | Terms of use: own domain, HTTPS, no login, same link as manifest | `https://www.eqolux.com/terms/` | Met |
