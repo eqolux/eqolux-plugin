@@ -3,7 +3,7 @@ name: eqolux-purchasing-analysis
 description: Analyze restaurant and hotel purchasing data in Eqolux — spend by supplier, establishment, category or period, product prices and their evolution, origins and carbon footprint. Use whenever the user asks about their purchases, suppliers, invoices, delivery notes, products, prices, food cost or CO2 tracked in Eqolux.
 license: MIT
 metadata:
-  version: '0.2.0'
+  version: '0.2.2'
   author: Eqolux
 ---
 
@@ -26,13 +26,13 @@ Eqolux reads supplier documents (invoices, delivery notes, credit notes) for res
 
 - **Spend totals come from `documents`.** Spend per supplier, establishment, month or period is `SUM(documents.total_amount_ht)`: it is what the Eqolux app shows. Use `orders` (one row per product line) for product-level detail: what was bought, quantities, prices, categories, origins. Its sum can be lower than document totals when some lines of a document could not be read; if you show both, explain the difference.
 - **Credit notes are already negative** in totals (`total_amount_ht`, `quantity`, `total_weight_kg`, `co2_kg`), so a plain `SUM` nets them out. Never change their sign. For price statistics (min, max, average, change over time), exclude them: `WHERE NOT is_credit_note`.
-- **Compare like with like.** For food (`products.item_category_type = 'food'`), compare `price_per_kg`; for other products, `unit_price_ht`. When asked "the price of X" for a food product, give the price per kg first. For an average price, divide spend by weight or quantity (`SUM(total_amount_ht) / SUM(total_weight_kg)`) rather than averaging line prices.
+- **Compare like with like.** For food (`products.item_category_type = 'food'`), compare `price_per_kg`; for other products, `unit_price_ht`. When asked "the price of X" for a food product, give the price per kg first. For an average price, divide spend by volume on the lines that have one (`SUM(total_amount_ht) / NULLIF(SUM(total_weight_kg), 0)` with `price_per_kg > 0`, credit notes excluded; per unit, `SUM(quantity)` within a single unit) rather than averaging line prices.
 - **Currency.** Amounts are already converted to the display currency (EUR unless `display_currency` says otherwise). Never convert them yourself. State the currency in the answer.
-- **Period.** `run_sql_query` takes two optional dates, `YYYY-MM-DD`: `period_start` (included) and `period_end` (excluded, so pass tomorrow's date to include today). They limit the `orders` and `documents` tables to that period, and they are what keeps a query fast: a `WHERE` on `date` narrows the result but the query still reads the whole period. Without them, the tool uses the last 24 months; it accepts up to 120 months. The first line of every result states the period applied. Other tables (products, organizations, categories…) are not limited by the period.
-- **Default period.** When the user gives none, use the last 12 months: `period_start` = the same day one year ago, `period_end` = tomorrow. For a comparison between two periods (this year against last year), pass a period that covers both and split it in SQL. Always state the exact dates used in the answer.
+- **Period.** `run_sql_query` takes two optional dates, `YYYY-MM-DD`: `period_start` (included) and `period_end` (excluded, so pass tomorrow's date to include today). They limit the `orders` and `documents` tables to that period, and they are what keeps a query fast: a `WHERE` on `date` narrows the result but the query still reads the whole period. Without them, the tool uses the last 12 months up to today, the period to use when the user gives none; it accepts up to 120 months. The first line of every result states the period applied. Other tables (products, organizations, categories…) are not limited by the period.
+- **Comparing periods.** For a comparison between two periods (this year against last year), pass a period that covers both and split it in SQL: the default period does not include last year. Always state the exact dates used in the answer.
 - **Dates** are UTC calendar days. To split the period (by month, by half-year), use `date_trunc` or date literals on `date`, for example `date_trunc('month', o.date)` or `WHERE o.date >= DATE '2026-04-01'`.
-- **Drafts.** `is_draft` marks data the customer has not validated yet. The app includes it; include it too, unless the user asks for validated data only.
-- **Data quality.** `error_risk` is higher for lines read with low confidence. When a price looks implausible (an extreme price per kg, a unit mix-up), check `error_risk` and `unit` and say so instead of presenting it as a fact.
+- **Drafts.** `documents.is_draft` marks documents the customer has not validated yet; most documents stay drafts. The app includes them; include them too. For validated data only, filter on the document (`orders` joined to `documents` on `document_id`, `NOT d.is_draft`) and say that little data may remain. `orders.is_draft` only says whether the line itself was edited.
+- **Data quality.** `documents.error_risk` is a review-priority score, when computed (lines missing, a price per kg far above the product's usual price, a rare supplier); `orders.error_risk` is usually 0, and 0 never means checked. When a price looks implausible (an extreme price per kg, a unit mix-up), look at the line's `unit`, `quantity`, `total_weight_kg` and `weight_estimated_by_ai` and at the document's `error_risk`, link the document, and say so instead of presenting it as a fact.
 
 ## Finding things by name
 

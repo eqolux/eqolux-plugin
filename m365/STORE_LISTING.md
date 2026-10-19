@@ -230,7 +230,7 @@ Support: support@eqolux.com
 | --- | --- | --- |
 | `list_organizations` | The organizations the signed-in user belongs to | readOnlyHint true, destructiveHint false, idempotentHint true, openWorldHint false |
 | `describe_data` | Documentation of the tables and columns the query tool can read | same |
-| `run_sql_query` | One read-only SQL SELECT on one organization, with an optional period (`period_start`, `period_end`, last 24 months by default, 120 months at most), 500 rows at most | same |
+| `run_sql_query` | One read-only SQL SELECT on one organization, with an optional period (`period_start`, `period_end`, last 12 months by default, 120 months at most), 500 rows at most | same |
 
 Safeguards on the server: the query is parsed with the PostgreSQL parser and only a single SELECT over the documented dataset tables is accepted (no writes, no system tables, no recursive queries, limited functions); it runs in a read-only transaction with a statement timeout; row-level scope is computed from the user's Eqolux permissions for each call; per-user rate limits. Text values returned from documents are treated as data, never as instructions (server instructions and agent instructions).
 

@@ -3,7 +3,7 @@ name: eqolux-savings-opportunities
 description: Find savings in restaurant or hotel purchasing with Eqolux — the same product bought at very different prices, price increases, purchases above a negotiated fixed price. Use when the user asks where they could save money, why costs went up, which prices increased, or wants to prepare a supplier negotiation.
 license: MIT
 metadata:
-  version: '0.2.0'
+  version: '0.2.2'
   author: Eqolux
 ---
 
@@ -14,7 +14,7 @@ The Eqolux connector provides `list_organizations`, `describe_data` and `run_sql
 ## Before querying
 
 - **One organization per query.** Call `list_organizations`; if the user belongs to several, use the one they named, otherwise ask. Call `describe_data` once before the first query.
-- **Period.** Pass the period as `period_start` (included) and `period_end` (excluded), both `YYYY-MM-DD`. They limit `orders` and `documents` and keep the query fast. Without them the tool uses the last 24 months. By default, use the last 12 months (`period_end` = tomorrow). For a comparison of two periods, pass one period that covers both and split it in SQL.
+- **Period.** Pass the period as `period_start` (included) and `period_end` (excluded), both `YYYY-MM-DD`. They limit `orders` and `documents` and keep the query fast. Without them the tool uses the last 12 months up to today, the right period when the user gives none. For a comparison of two periods, pass one period that covers both and split it in SQL: the default period does not include last year.
 - **Prices.** Exclude credit notes from price statistics (`NOT is_credit_note`). Compare food (`item_category_type = 'food'`) per kg and other products per unit, and weight averages by volume (spend divided by weight or quantity).
 - **Currency.** Amounts are already converted to the display currency; never convert them yourself.
 
