@@ -28,7 +28,7 @@ Status "Attention needed". Microsoft tags each guideline *Must fix* or *Good-to-
 
 **To resubmit:** rebuild and upload the 1.0.1 package (section 3); replace the English descriptions and add the French listing (section 5); upload the captioned screenshots, English and French (section 5); paste the notes (section 7); then **Review and publish**.
 
-**Status on 2026-10-26:** in Partner Center, package 1.0.1 uploaded (manifest checks passed), English description and screenshots replaced (alt texts set), French listing added and complete (icon, four screenshots, keywords), notes typed on the Review and submit page with `<PASSWORD>` in place of the test password. Left to do: type the password, click **Publish**.
+**Status on 2026-10-26:** in Partner Center, package 1.0.1 uploaded (manifest checks passed), English description and screenshots replaced (alt texts set), French listing added and complete (icon, four screenshots, keywords), notes typed on the Review and submit page with `<PASSWORD>` in place of the test password. Benoît typed the password and published: submission of 2026-10-26, pre-processing started at 15:01 UTC. Next: the certification report (three to four business days for a first answer). Publisher Attestation (App Compliance) right after the listing.
 
 `mcp.eqolux.com` facts checked on 2026-10-26 for the reply: CNAME `ghs.googlehosted.com.` (Cloud Run domain mapping of the `eqolux-agents` project, `europe-west1`), DNS of `eqolux.com` on `ns-cloud-e*.googledomains.com`, certificate `CN=mcp.eqolux.com` by Google Trust Services (until 2027-01-04, renewed automatically), `/health` answers `{"ok":true}` without redirect, `/.well-known/oauth-protected-resource` names the resource `https://mcp.eqolux.com/mcp`.
 
