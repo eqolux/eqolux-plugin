@@ -1,0 +1,29 @@
+{
+  "bandHeight": 96,
+  "screenshots": [
+    {
+      "file": "01-agent-home.png",
+      "cropTop": 96,
+      "en": "Ask questions about your Eqolux purchasing data in Microsoft 365 Copilot",
+      "fr": "Interrogez vos données d'achat Eqolux dans Microsoft 365 Copilot"
+    },
+    {
+      "file": "02-top-suppliers.png",
+      "cropTop": 12,
+      "en": "See your biggest suppliers, with the period and currency stated",
+      "fr": "Voyez vos principaux fournisseurs, avec la période et la devise indiquées"
+    },
+    {
+      "file": "03-origins-co2.png",
+      "cropTop": 12,
+      "en": "See where your food purchases come from and their carbon footprint",
+      "fr": "Voyez d'où viennent vos achats alimentaires et leur empreinte carbone"
+    },
+    {
+      "file": "04-price-dispersion-demo-prices.png",
+      "cropTop": 12,
+      "en": "Find products bought at very different prices and what you could save",
+      "fr": "Repérez les produits achetés à des prix très différents et les économies possibles"
+    }
+  ]
+}
