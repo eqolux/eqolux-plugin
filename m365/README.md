@@ -14,8 +14,10 @@ The project follows the layout Microsoft 365 Agents Toolkit generates for **Decl
 | `appPackage/color.png`, `appPackage/outline.png` | Icons, 192×192 and 32×32 |
 | `m365agents.yml` | Lifecycle: provision (app, OAuth registration, package, validation, sideload) and publish to a tenant catalog |
 | `env/.env.dev`, `env/.env.prod` | Environment values (committed, no secrets). Secrets go in `env/.env.<env>.user`, which is gitignored. `dev` is provisioned (sideload); `prod` is only packaged for the store |
-| `STORE_LISTING.md` | Partner Center listing (EN/FR), certification notes, screenshot list, compliance checklist |
+| `STORE_LISTING.md` | Partner Center listing (EN/FR), certification notes and replies to certification reports, screenshot list, compliance checklist |
 | `store/logo-300.png` | The color icon at 300×300, for a Partner Center logo field that asks for more than 192 px |
+| `store/screenshots-en/` | Raw captures in Copilot, 1366×768, not uploaded as is |
+| `store/listing/en/`, `store/listing/fr/` | The screenshots to upload: each capture under its caption, built by `swift caption-screenshots.swift` (run from `store/`) with the texts of `store/captions.json` |
 
 Tools are discovered at runtime from the server (`functions: []`, `run_for_functions: ["*"]`): a new or changed tool on the server reaches users without resubmitting the agent, after Microsoft's runtime safety checks on the changed tool.
 

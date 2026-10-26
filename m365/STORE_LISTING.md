@@ -1,17 +1,36 @@
 # Eqolux in the Microsoft 365 Agent Store: Partner Center listing
 
-Everything to enter in Partner Center for the **Apps and agents for Microsoft 365 and Copilot** offer, ready to paste, in English and French. Prepared on 2026-10-08 against the Microsoft documentation of that date (sources at the end).
+Everything to enter in Partner Center for the **Apps and agents for Microsoft 365 and Copilot** offer, ready to paste, in English and French. Prepared on 2026-10-08 against the Microsoft documentation of that date (sources at the end); updated on 2026-10-26 after the first certification report (section 0).
 
 | Item | Value |
 | --- | --- |
-| Package | `appPackage/build/appPackage.prod.zip`, built with `atk package --env prod` (Agents Toolkit CLI 1.1.18-beta.2026092303.0) |
+| Package | `appPackage/build/appPackage.prod.zip`, built with `atk package --env prod` (Agents Toolkit CLI 1.1.18; 1.0.0 was built with 1.1.18-beta.2026092303.0). 1.0.1 also carries the instruction changes of 2026-10-19 (12-month default period, drafts, `error_risk`) |
 | Manifest id | `b44aa36a-9971-4e9a-bd5c-251fd82e8917` (store identity; keep it for every update) |
-| Manifest version | `1.0.0` (raise it for each new submission) |
-| Validation | `atk validate --package-file`: 61 rules passed, no warning. `atk validate --manifest-file --env prod`: all schemas passed |
+| Manifest version | `1.0.1` (1.0.0 was the first submission; raise it for each new submission) |
+| Validation | `atk validate --package-file`: 61 rules passed, no warning. `atk validate --manifest-file --env prod`: all schemas passed (version 1.0.1, 2026-10-26) |
 | OAuth | Auth config `MCP_DA_AUTH_ID_EQOLUX` of `env/.env.dev`, reused (Any Teams app, Any Microsoft 365 organization) |
 | MCP server | `https://mcp.eqolux.com/mcp`, 3 read-only tools discovered at runtime |
 
 Rebuild the zip after any change to `appPackage/` and before uploading: `appPackage/build/` is gitignored.
+
+## 0. Certification report of 2026-10-24 (first submission, version 1.0.0)
+
+Status "Attention needed". Microsoft tags each guideline *Must fix* or *Good-to-fix*; the report marks the latter `[SF]`.
+
+| Policy | Finding | Fix | Where |
+| --- | --- | --- | --- |
+| 1140.4.1.4 Screenshots (*Must fix*) | No captions in the screenshots | Each capture now sits under a caption band, at 1:1 scale: `store/listing/en/` and `store/listing/fr/`, generated from `store/screenshots-en/` by `store/caption-screenshots.swift` with the texts of `store/captions.json` | Package repo; upload in Partner Center |
+| 1140.4.1.5 Video (`[SF]`, *Good-to-fix*) | No video | Optional; see section 5, Video | Partner Center, when a video exists |
+| 1140.4.1.9 Localization (*Must fix*) | The package has `fr.json` but Partner Center has only the English listing; the supported languages are not stated clearly | Both descriptions (package and Partner Center) end with "This application is available in English and French." (policy 100.1.4 asks for this English phrase at the start or the end); add **French** under **Manage additional languages** and fill it from section 5 | Package (1.0.1) and Partner Center |
+| 1140.6.2 Publisher Attestation (`[SF]`, *Good-to-fix*) | Not completed | Cannot be done before the first listing: "For an app that isn't previously listed, you can't complete Publisher Attestation until the app is available in Teams Store" (Teams Store validation guidelines). Said in the reply to reviewers; complete it right after the listing | Partner Center, after listing |
+| 1140.9.2 Agent wording | First reference to the agent not written as "agents for Microsoft Copilot" | The first reference now reads "The Eqolux agent for Microsoft 365 Copilot" ("L'agent Eqolux pour Microsoft 365 Copilot"), the product's current name; later references stay "the agent" | Package (1.0.1) and Partner Center descriptions |
+| 1140.9.2 MCP server URL | Asks whether `https://mcp.eqolux.com/mcp` in `ai-plugin.json` is under Eqolux's control | Yes: answered in the reply to reviewers (section 7), with checks they can run | Notes for certification |
+
+**To resubmit:** rebuild and upload the 1.0.1 package (section 3); replace the English descriptions and add the French listing (section 5); upload the captioned screenshots, English and French (section 5); paste the notes (section 7); then **Review and publish**.
+
+**Status on 2026-10-26:** in Partner Center, package 1.0.1 uploaded (manifest checks passed), English description and screenshots replaced (alt texts set), French listing added and complete (icon, four screenshots, keywords), notes typed on the Review and submit page with `<PASSWORD>` in place of the test password. Benoît typed the password and published: submission of 2026-10-26, pre-processing started at 15:01 UTC. Next: the certification report (three to four business days for a first answer). Publisher Attestation (App Compliance) right after the listing.
+
+`mcp.eqolux.com` facts checked on 2026-10-26 for the reply: CNAME `ghs.googlehosted.com.` (Cloud Run domain mapping of the `eqolux-agents` project, `europe-west1`), DNS of `eqolux.com` on `ns-cloud-e*.googledomains.com`, certificate `CN=mcp.eqolux.com` by Google Trust Services (until 2027-01-04, renewed automatically), `/health` answers `{"ok":true}` without redirect, `/.well-known/oauth-protected-resource` names the resource `https://mcp.eqolux.com/mcp`.
 
 ## 1. Before submitting
 
@@ -24,8 +43,8 @@ Items that block or weaken the submission today. Section 9 maps every guideline.
 5. **Availability (99.9 %).** Confirm that production runs the cold-start fix and `--min-instances 1` (project-status entry of 2026-10-08 afternoon), and add an uptime check on `https://mcp.eqolux.com/health` (answers `{"ok":true}`), so a failure is seen before Microsoft's continuous health evaluation sees it.
 6. **Test accounts.** `review@eqolux.com` (Eqolux user 173, organization 259 only) must stay active, without MFA or email-code-only sign-in, and with a known password, for as long as the agent is listed: Microsoft re-tests listed agents. Microsoft also asks for "at least one account that isn't pre-configured to test the first-run sign-in experience". One account is enough here (decision of 2026-10-08): the first run in Copilot is per Microsoft user (each reviewer sees the **Sign in to Eqolux** card the first time, whatever the Eqolux account did elsewhere), and the account needs no setup in Eqolux. The account is shared with the Anthropic and OpenAI reviews: the server runs one query at a time per account, so overlapping reviews can get "Eqolux is busy right now, retry in about 30 seconds"; say so in the notes.
 7. **OAuth registration.** Open the Teams Developer Portal, **Tools > OAuth client registration**, and confirm on the dev registration: **Restrict usage by org** = *Any Microsoft 365 organization*, **Restrict usage by app** = *Any Teams app*, base URL `https://mcp.eqolux.com/mcp`. With *My organization only*, reviewers and customers cannot sign in.
-8. **Screenshots and video** (section 5): to capture.
-9. **Partner Center account.** The Microsoft 365 and Copilot program and the company verification are complete (2026-10-08). Confirm that the domain `eqolux.com` is verified for the publisher (the MCP server must be served from it or a subdomain). Publisher Attestation (policy 1140.6) is completed after the first listing.
+8. **Screenshots and video** (section 5): four captioned screenshots per language are ready; the video is optional.
+9. **Partner Center account.** The Microsoft 365 and Copilot program and the company verification are complete (2026-10-08). Confirm that the domain `eqolux.com` is verified for the publisher (the MCP server must be served from it or a subdomain). Publisher Attestation (policy 1140.6) is completed after the first listing (section 0).
 10. **Microsoft 365 test tenant.** The Teams submission checklist asks for an admin and a non-admin account of a configured tenant when an app needs tenant configuration. This agent needs none beyond allowing it, so the notes say so; if the reviewers ask, give two accounts of the Eqolux tenant with Copilot Chat.
 
 ## 2. Offer setup
@@ -74,7 +93,7 @@ The privacy and terms links are the same as in the manifest (`developer.privacyU
 
 ## 5. Marketplace listings
 
-Add the languages **English** (default) and **French** under **Manage additional languages**; both are in the package (`localizationInfo`).
+Add the languages **English** (default) and **French** under **Manage additional languages**; both are in the package (`localizationInfo`). The first submission had only English, which certification rejected (policy 1140.4.1.9): fill every field below in both languages, screenshots included.
 
 ### Name
 
@@ -98,7 +117,7 @@ Format it with the editor's bold, bullets and links (Partner Center has no previ
 
 **English** (about 2,500 characters, 375 words)
 
-> Eqolux reads the supplier invoices, delivery notes and credit notes of restaurant and hotel groups and turns them into structured purchase data. The Eqolux agent, designed for Microsoft 365 Copilot, lets you ask questions about that data in plain language, in Copilot Chat, Microsoft Teams and the Microsoft 365 apps. Answers come as tables, with links to the products, documents and suppliers in Eqolux.
+> Eqolux reads the supplier invoices, delivery notes and credit notes of restaurant and hotel groups and turns them into structured purchase data. The Eqolux agent for Microsoft 365 Copilot lets you ask questions about that data in plain language, in Copilot Chat, Microsoft Teams and the Microsoft 365 apps. Answers come as tables, with links to the products, documents and suppliers in Eqolux.
 >
 > **Who it is for**: purchasing managers, chefs, controllers and general managers of restaurant and hotel groups that use Eqolux.
 >
@@ -109,7 +128,7 @@ Format it with the editor's bold, bullets and links (Partner Center has no previ
 >
 > **How it works**
 > - Open the Eqolux agent in Microsoft 365 Copilot and ask, for example, "Who were my 10 biggest suppliers over the last 12 months?"
-> - The first time, select **Sign in to Eqolux** and sign in with your Eqolux account. Copilot then asks you to allow Eqolux to answer.
+> - The first time, select **Sign in to Eqolux** and sign in with your Eqolux account.
 > - To sign out, open **Chat settings > Agents** in Copilot.
 >
 > **Requirements**
@@ -121,24 +140,26 @@ Format it with the editor's bold, bullets and links (Partner Center has no previ
 > - Answers are limited to the organizations, establishments, suppliers, documents and product categories your Eqolux account can access, one organization at a time.
 > - Each question covers one period of up to ten years. Without a period, the agent uses the last 12 months.
 > - Answers are generated by AI and can contain mistakes: check important figures in Eqolux. Savings figures are estimates computed from the documents Eqolux has read.
-> - The listing is available in English and French; the agent answers in the language of the question.
+> - The agent answers in English or French, in the language of the question.
 >
 > **Help and support**: see [how to use Eqolux with an AI assistant](https://www.eqolux.com/ai-connector/), or write to [support@eqolux.com](mailto:support@eqolux.com), including to report an inaccurate or inappropriate answer. [Privacy policy](https://www.eqolux.com/privacy-policy/) · [Terms](https://www.eqolux.com/terms/)
+>
+> This application is available in English and French.
 
 **French**
 
-> Eqolux lit les factures, bons de livraison et avoirs fournisseurs des groupes de restaurants et d'hôtels et les transforme en données d'achat structurées. L'agent Eqolux, conçu pour Microsoft 365 Copilot, vous permet d'interroger ces données en langage courant, dans Copilot Chat, Microsoft Teams et les applications Microsoft 365. Les réponses arrivent sous forme de tableaux, avec des liens vers les produits, documents et fournisseurs dans Eqolux.
+> Eqolux lit les factures, bons de livraison et avoirs fournisseurs des groupes de restaurants et d'hôtels et les transforme en données d'achat structurées. L'agent Eqolux pour Microsoft 365 Copilot vous permet d'interroger ces données en langage courant, dans Copilot Chat, Microsoft Teams et les applications Microsoft 365. Les réponses arrivent sous forme de tableaux, avec des liens vers les produits, documents et fournisseurs dans Eqolux.
 >
 > **Pour qui** : responsables achats, chefs, contrôleurs de gestion et directeurs de groupes de restaurants et d'hôtels qui utilisent Eqolux.
 >
 > **Principaux bénéfices**
 > - **Savoir où va votre argent** : dépenses par fournisseur, établissement, catégorie de produits et mois, avoirs déduits et montants dans une seule devise.
-> - **Repérer les dérives de prix** : suivre les prix des produits dans le temps, trouver un même produit acheté à des prix très différents et les achats au-dessus d'un prix négocié.
+> - **Repérer les dérives de prix** : suivre les prix des produits dans le temps, trouver un même produit acheté à des prix très différents et repérer les achats au-dessus d'un prix négocié.
 > - **Comprendre vos approvisionnements** : l'origine de vos produits et leur empreinte carbone estimée.
 >
 > **Comment ça marche**
 > - Ouvrez l'agent Eqolux dans Microsoft 365 Copilot et posez une question, par exemple « Quels ont été mes 10 plus gros fournisseurs sur les 12 derniers mois ? »
-> - La première fois, sélectionnez **Se connecter à Eqolux** et connectez-vous avec votre compte Eqolux. Copilot vous demande ensuite d'autoriser Eqolux à répondre.
+> - La première fois, sélectionnez **Se connecter à Eqolux** et connectez-vous avec votre compte Eqolux.
 > - Pour vous déconnecter, ouvrez **Paramètres de conversation > Agents** dans Copilot.
 >
 > **Prérequis**
@@ -150,9 +171,11 @@ Format it with the editor's bold, bullets and links (Partner Center has no previ
 > - Les réponses se limitent aux organisations, établissements, fournisseurs, documents et catégories de produits auxquels votre compte Eqolux a accès, une organisation à la fois.
 > - Chaque question porte sur une période de dix ans au plus. Sans période, l'agent prend les 12 derniers mois.
 > - Les réponses sont générées par IA et peuvent contenir des erreurs : vérifiez les chiffres importants dans Eqolux. Les économies affichées sont des estimations calculées à partir des documents lus par Eqolux.
-> - La fiche est disponible en anglais et en français ; l'agent répond dans la langue de la question.
+> - L'agent répond en anglais ou en français, dans la langue de la question.
 >
 > **Aide et support** : consultez [comment utiliser Eqolux avec un assistant IA](https://www.eqolux.com/fr/connecteur-ia/), ou écrivez à [support@eqolux.com](mailto:support@eqolux.com), y compris pour signaler une réponse inexacte ou inappropriée. [Politique de confidentialité](https://www.eqolux.com/privacy-policy/) · [Conditions](https://www.eqolux.com/terms/)
+>
+> Cette application est disponible en anglais et en français. This application is available in English and French.
 
 The labels of the sign-in button and of the settings menu in French Copilot may differ from « Se connecter à Eqolux » and « Paramètres de conversation > Agents »: check them on the French screenshots and align the text.
 
@@ -171,17 +194,18 @@ The color icon of the package, `appPackage/color.png` (192×192 PNG): the store 
 
 ### Screenshots (3 to 5 per language; 1366×768 px; PNG; 1,024 KB at most)
 
-Rules: real UI of the submitted build, no mock-up, at least one in Copilot, legible text, one message per image, no personal data (use the demo organization 259 "Best Hotels Group" and a neutral Microsoft 365 user name), no browser chrome beyond the Microsoft 365 window. Show the French Copilot UI for the French listing. Capture at 1366×768 (browser window or `sips -c 768 1366 file.png` to crop), then check the size and weight.
+Rules: real UI of the submitted build, no mock-up, **a caption in the image** (policy 1140.4.1.4, *Must fix*), at least one in Copilot, legible text, one message per image, no personal data (use the demo organization 259 "Best Hotels Group" and a neutral Microsoft 365 user name), no browser chrome beyond the Microsoft 365 window.
 
-| # | Client | Prompt (EN / FR) | Caption EN | Caption FR |
-| --- | --- | --- | --- | --- |
-| 1 | Copilot Chat on the web (`m365.cloud.microsoft/chat`) | Starter "Top suppliers" / « Principaux fournisseurs » | See your biggest suppliers and open each one in Eqolux | Voyez vos principaux fournisseurs et ouvrez chacun dans Eqolux |
-| 2 | Copilot Chat on the web | Starter "Spend by month" / « Dépenses par mois » | Follow spend month by month in each establishment | Suivez les dépenses mois par mois dans chaque établissement |
-| 3 | Copilot in Microsoft Teams | Starter "Price increases" / « Hausses de prix » | Spot the product prices that increased the most | Repérez les prix de produits qui ont le plus augmenté |
-| 4 | Copilot in Word (side pane) | Starter "Savings" / « Économies » | Find the same product bought at very different prices | Trouvez un même produit acheté à des prix très différents |
-| 5 | Copilot Chat on the web | Starter "Origins and carbon" / « Origines et carbone » | See where your food comes from and its carbon footprint | Voyez d'où vient votre alimentation et son empreinte carbone |
+Upload `store/listing/en/` for English and `store/listing/fr/` for French, in file order. The raw captures (`store/screenshots-en/`, Copilot Chat on the web, English UI, organization 259) are not uploaded: `store/caption-screenshots.swift` puts each one under a navy caption band (Inter SemiBold, 96 px), keeping it at 1:1 scale and cropping it vertically, and writes 1366×768 PNGs of 105 to 180 KB. To change a caption or add a capture, edit `store/captions.json` (one entry per capture: file, top crop in pixels, English and French captions), then run `swift caption-screenshots.swift` from `store/`.
 
-Optional replacement for #5 if a sign-in image is wanted: the **Sign in to Eqolux** card on first use, caption "Sign in once with your Eqolux account" / « Connectez-vous une fois avec votre compte Eqolux ».
+| # | Capture | Caption EN | Caption FR |
+| --- | --- | --- | --- |
+| 1 | `01-agent-home.png`: the agent's home with its starters and disclaimer | Ask questions about your Eqolux purchasing data in Microsoft 365 Copilot | Interrogez vos données d'achat Eqolux dans Microsoft 365 Copilot |
+| 2 | `02-top-suppliers.png`: "who were the 5 biggest suppliers in 2025" | See your biggest suppliers, with the period and currency stated | Voyez vos principaux fournisseurs, avec la période et la devise indiquées |
+| 3 | `03-origins-co2.png`: food purchases by origin with CO2e, 2025 | See where your food purchases come from and their carbon footprint | Voyez d'où viennent vos achats alimentaires et leur empreinte carbone |
+| 4 | `04-price-dispersion-demo-prices.png`: products bought at very different prices, 2025 | Find products bought at very different prices and what you could save | Repérez les produits achetés à des prix très différents et les économies possibles |
+
+The French screenshots show the English Copilot UI with French captions. Better, when time allows: capture the same four questions asked in French in a French Copilot UI, save them in `store/screenshots-fr/`, and point the script at them for the French listing. A capture in Teams or Word (the other clients the guidelines name) would also strengthen the listing.
 
 ### Video (optional)
 
@@ -193,9 +217,38 @@ Choose the publication schedule carefully: it cannot be changed after the first 
 
 ## 7. Notes for certification
 
-Paste the short version in **Notes for certification** and upload the full version (this section with section 8, exported to PDF) in **Additional certification info**. Reviewers cannot contact Eqolux: the notes must be complete. Type the passwords in Partner Center only; never write them in this repository.
+Paste the notes in **Notes for certification** (2,500 characters at most) and upload the full version (this section with section 8, exported to PDF) in **Additional certification info**. Reviewers cannot contact Eqolux: the notes must be complete. Type the passwords in Partner Center only; never write them in this repository.
 
-### Short version (paste)
+### Notes pasted for the 1.0.1 resubmission (2026-10-26)
+
+The **Notes for certification** field is on the **Review and submit** page, holds 2,500 characters at most and is not kept between submissions: paste it again each time, just before **Publish**. The reply to the report and the short version below do not fit together, so this condensed text was pasted instead (2,366 characters; the password is typed in Partner Center only). The full facts behind the MCP answer are in section 0; the attached PDF (Additional certification info, 2026-10-12) still carries the full test details.
+
+```text
+RESUBMISSION 1.0.1: CHANGES SINCE THE REPORT OF 2026-10-24
+- 1140.4.1.4: every screenshot now has a caption in the image, in the English and French listings.
+- 1140.4.1.9: French listing added in Partner Center, matching fr.json of the package; both descriptions end with "This application is available in English and French."
+- 1140.9.2: the first reference now reads "The Eqolux agent for Microsoft 365 Copilot".
+- 1140.9.2 MCP server URL: yes, https://mcp.eqolux.com/mcp is under Eqolux's control. mcp.eqolux.com is a subdomain of Eqolux's own domain eqolux.com, whose DNS Eqolux manages; it is a CNAME to the Cloud Run domain mapping of Eqolux's own Cloud Run service, in Eqolux's Google Cloud project (EU). The TLS certificate is issued to mcp.eqolux.com. No third party hosts, proxies or redirects it. Check: https://mcp.eqolux.com/health returns {"ok":true}.
+- 1140.6.2: Publisher Attestation will be completed as soon as the agent is listed (not possible before the first listing).
+- 1140.4.1.5: no video in this version.
+
+AGENT: declarative agent with one action, the remote MCP server https://mcp.eqolux.com/mcp, three read-only tools (list_organizations, describe_data, run_sql_query; readOnlyHint true). No Microsoft Entra ID, no SSO, no tenant data.
+
+TEST ACCOUNT (Eqolux account, no MFA, valid while listed): review@eqolux.com / password: <PASSWORD>
+Demo organization "Best Hotels Group" (id 259), synthetic data. The account is shared with other reviews: if Eqolux answers "busy, retry in about 30 seconds", retry after 30 seconds.
+
+SIGN-IN: Copilot Chat > Eqolux agent > a conversation starter > "Sign in to Eqolux" > email, password sign-in > back in Copilot, "Allow". Sign-out: Chat settings > Agents > Eqolux.
+
+TESTS (organization 259, EUR excluding tax)
+- "Who were my 5 biggest suppliers in 2025?" -> Coastal Catch SARL ~2.97M, Ocean Fresh SAS ~2.62M, Blue Harvest SARL ~2.18M, Sea & Garden SAS ~2.08M, Heritage Harvest SARL ~1.17M, names linked to Eqolux.
+- Each of the six conversation starters returns a table for its period (details in the attached PDF).
+- "Place an order for 10 kg of salmon" -> declined (read-only), with a question it can answer.
+- Off-topic or abusive requests -> polite refusal and a purchasing question to ask instead.
+Some demo prices are deliberately implausible; the agent may flag them.
+Support: support@eqolux.com
+```
+
+### Short version (first submission, 2026-10-08)
 
 ```text
 Eqolux agent for Microsoft 365 Copilot: a declarative agent with one action, a remote MCP server (https://mcp.eqolux.com/mcp) exposing three read-only tools (list_organizations, describe_data, run_sql_query; readOnlyHint true). It reads the purchasing data of restaurant and hotel groups in Eqolux. No Microsoft Entra ID, no SSO, no tenant data, no admin configuration beyond allowing the agent.
@@ -298,7 +351,7 @@ Sources: validation guidelines for agents (2026-08-13), Teams Store validation g
 | Agent name identical in manifest, agent and plugin, and in the offer (agents guidelines; 1140.1.1) | `Eqolux` everywhere, in English and French | Met |
 | App name rules (Teams guidelines) | Brand name, no Microsoft product name, no "Dev/Beta" (the prod build has no suffix) | Met |
 | Short description: one sentence, no app name, no "app" | 74 characters | Met |
-| Long description: ≤ 4,000 characters and 500 words; audience; value; supported Microsoft products; requirements; limits; help or support link; "designed for Microsoft 365 Copilot" wording; supported languages | Section 5 (about 375 words); the package's version has the same content, with email addresses instead of links | Met |
+| Long description: ≤ 4,000 characters and 500 words; audience; value; supported Microsoft products; requirements; limits; help or support link; first reference "agent for Microsoft 365 Copilot" (1140.9.2, certification report of 2026-10-24); supported languages | Section 5 (about 375 words); the package's version has the same content, with email addresses instead of links | Met |
 | Additional purchases disclosed (1100.1, checklist) | "Requires an Eqolux subscription" in the description; box checked in Product setup | Met |
 | Sign-in, sign-out, sign-up way forward (1140.1.4) | Sign-in card in Copilot; sign-out from Chat settings > Agents; how to get an account in the description and the disclaimer | Met |
 | At least 3 conversation starters, all functional (agents guidelines; 1140.9) | 6 starters, each verified on organization 259 on 2026-10-08 | Verify after re-provision |
@@ -319,16 +372,16 @@ Sources: validation guidelines for agents (2026-08-13), Teams Store validation g
 | Duplicate agents | One agent; the dev sideload is never published | Met |
 | Manifest version ≥ 1.13; ≥ 1.25 for channel apps | Manifest 1.30; `supportsChannelFeatures: tier1` as scaffolded by the toolkit | Met. Verify: the declaration means the app was checked in standard, shared and private channels; remove it in a later version if the agent cannot be used in channels |
 | Icons: color 192×192, outline 32×32 white on transparent; store icon matches (Teams guidelines) | Validated by the toolkit; same icon for the listing | Met |
-| Screenshots: 3 to 5, 1366×768, ≤ 1,024 KB, captions, real UI, ≥ 1 in Copilot; other Microsoft 365 clients recommended (agents and Teams guidelines; 1140.4.1; 1140.9) | Five planned in section 5 (Copilot Chat, Teams, Word) | To do |
-| Video ads turned off (1140.4.1) | Only if a video is added | To do if used |
+| Screenshots: 3 to 5, 1366×768, ≤ 1,024 KB, captions in the image, real UI, ≥ 1 in Copilot; other Microsoft 365 clients recommended (agents and Teams guidelines; 1140.4.1.4; 1140.9) | Four per language in `store/listing/en` and `store/listing/fr`, captioned, all in Copilot Chat on the web | Met (Teams and Word captures would strengthen it) |
+| Video: 60 to 90 s, narrative, ads turned off (1140.4.1.5, *Good-to-fix*) | None yet; outline in section 5 | Optional |
 | Test accounts valid as long as listed, with data; one not pre-configured (1140.4.1; submission checklist) | `review@eqolux.com` on organization 259 (single account, first run per Microsoft user) | Met |
 | AI content: no harmful content; report mechanism; AI described before acquisition; AI disclaimer in the UI (1140.4.1; Teams AI guidelines) | Answers come from purchasing data only; support@eqolux.com to report; AI stated in the description; disclaimer at conversation start, plus Copilot's own AI notice | Met |
 | Privacy policy: covers the app, personal data handling, storage, retention, deletion, security, contact; no login; same link as the manifest (100.6; Teams guidelines; Partner Center) | Retention, security and contact sections exist; the connector is described in section 8 | To do: name Microsoft 365 Copilot (section 1, item 1) |
 | Terms of use: own domain, HTTPS, no login, same link as manifest | `https://www.eqolux.com/terms/` | Met |
 | Support link without login, with contact details (Teams guidelines; 1140.8 for clients) | `https://www.eqolux.com/contact/` | Met (better once the help page covers Copilot) |
-| Localization: language files, same metadata in every language, languages stated in the description, default language set (Teams guidelines) | `en.json` (default), `fr.json`; both descriptions say English and French | Met |
+| Localization: language files, same metadata in every language, languages stated in the description, default language set, every language listed in Partner Center (Teams guidelines; 1140.4.1.9; 100.1.4) | `en.json` (default), `fr.json`; both descriptions end with "This application is available in English and French."; English and French listings in Partner Center | Met once the French listing is filled (section 0) |
 | No advertising (1140.7) | None | Met |
-| Publisher Attestation (1140.6) | Completed after the first listing, as Microsoft allows for new apps | To do after listing |
+| Publisher Attestation (1140.6, *Good-to-fix*) | Completed after the first listing, as Microsoft allows for new apps; stated in the reply to the 2026-10-24 report | To do after listing |
 | Publisher Verification (Teams submission checklist) | Concerns Microsoft Entra app registrations; the agent has none | N/A (confirm if Partner Center asks) |
 | Zero regressions on resubmission | First submission | N/A |
 
